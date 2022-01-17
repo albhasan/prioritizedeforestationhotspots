@@ -1,0 +1,5 @@
+^LICENSE\.md$
+^data-raw$
+^tags
+^.*\.Rproj$
+^\.Rproj\.user$

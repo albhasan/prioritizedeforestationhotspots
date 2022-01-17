@@ -1,0 +1,30 @@
+Package: prioritizedeforestationhotspots
+Title: Prioritization of Deforestation Hotspots to Support Law Enforcement
+Version: 0.0.0.9000
+Authors@R: 
+    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
+           comment = c(ORCID = "YOUR-ORCID-ID"))
+Description: A method for prioritizing deforestation hotspots to support law enforcement actions in the Brazilian Amazon.
+License: MIT + file LICENSE
+Encoding: UTF-8
+Roxygen: list(markdown = TRUE)
+RoxygenNote: 7.1.2
+LazyData: true
+Depends: 
+    R (>= 2.10)
+Imports:
+    doParallel,
+    dplyr,
+    ggplot2,
+    magrittr,
+    parsnip,
+    purrr,
+    readr,
+    recipes,
+    rsample,
+    sf,
+    tibble,
+    tidyr,
+    tune,
+    vip,
+    workflows
