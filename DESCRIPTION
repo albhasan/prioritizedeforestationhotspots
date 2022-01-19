@@ -1,9 +1,16 @@
 Package: prioritizedeforestationhotspots
 Title: Prioritization of Deforestation Hotspots to Support Law Enforcement
 Version: 0.0.0.9000
-Authors@R: 
-    person("First", "Last", , "first.last@example.com", role = c("aut", "cre"),
-           comment = c(ORCID = "YOUR-ORCID-ID"))
+Authors@R: c(
+    person("Guilherme", "Mataveli", email = "mataveli@alumni.usp.br",        role = c("aut"), comment = c(ORCID = "0000-0002-4645-0117")),
+    person("Gabriel", "de Oliveira", email = "deoliveira@southalabama.edu",  role = c("aut"), comment = c(ORCID = "0000-0002-1940-6874")),
+    person("Michel", "Chaves", email = "michel.chaves@inpe.br",              role = c("aut"), comment = c(ORCID = "0000-0002-1498-6830")),
+    person("Ricardo", "Dalagnol", email = "ricds@hotmail.com",               role = c("aut"), comment = c(ORCID = "0000-0002-7151-8697")),
+    person("Fabien", "Wagner", email = "wagner.h.fabien@gmail.com",          role = c("aut"), comment = c(ORCID = "0000-0002-9623-1182")),
+    person("Alber", "Sanchez", email = "albhasan@gmail.com",                 role = c("aut", "cre"), comment = c(ORCID = "0000-0001-7966-2880")),
+    person("Celso", "Silva-Junior", email = "celsohlsj@gmail.com ",          role = c("aut"), comment = c(ORCID = "0000-0002-1052-5551")),
+    person("Luiz", "Aragão", email = "luiz.aragao@inpe.br",                  role = c("aut"), comment = c(ORCID = "0000-0002-4134-6708"))           
+    )
 Description: A method for prioritizing deforestation hotspots to support law enforcement actions in the Brazilian Amazon.
 License: MIT + file LICENSE
 Encoding: UTF-8

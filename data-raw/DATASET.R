@@ -115,7 +115,7 @@ constant_tb <- constant_tb %>%
 
 
 # Build data set.
-deforestation_grid <- variable_ls %>%
+deforestation_data <- variable_ls %>%
     dplyr::bind_rows() %>%
     dplyr::left_join(constant_tb, by = "id") %>%
     dplyr::left_join(deforestation_tb, by = c("id", "ref_year")) %>%
@@ -136,6 +136,12 @@ deforestation_grid <- variable_ls %>%
     )
 
 
-# Save data.
-usethis::use_data(deforestation_grid, overwrite = TRUE)
+# Read and prepare the grid.
+deforestation_grid <- grid_file %>%
+    sf::st_read() %>%
+    sf::st_transform(crs = 4326) %>%
+    dplyr::select(id = Id)
 
+
+# Save data.
+usethis::use_data(deforestation_data, deforestation_grid, overwrite = TRUE)

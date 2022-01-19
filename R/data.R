@@ -1,7 +1,7 @@
 #' Deforestation data for the Brazilian Amazon
 #'
 #' A dataset containing data regarding deforestation in the Brazilian Amazon.
-#' The data have been aggregated into a regular grid made of cell of of 25
+#' These data have been aggregated into a regular grid made of cell of of 25
 #' square kilometres.
 #'
 #' @format A data frame with 27132 rows and 14 variables:
@@ -20,7 +20,19 @@
 #'    \item{dist_2_percent_ly}{distance to the closest grid centroid with more than 2% deforestation in year before the reference year (kilometres)}
 #'    \item{active_fires_ly}{Number of active fires in the year before the reference year}
 #' }
+"deforestation_data"
+
+
+
+#' Deforestation grid for the Brazilian Amazon
+#'
+#' A dataset containing spatial data regarding the Brazilian Amazon.
+#' These data represents a regular grid where each cell has an area of 25 square
+#' kilometres.
+#'
+#' @format A data frame with 6783 rows and 2 variables:
+#' \describe{
+#'    \item{id}{Cell identifier}
+#'    \item{geometry}{Cell geometry}
+#' }
 "deforestation_grid"
-
-
-

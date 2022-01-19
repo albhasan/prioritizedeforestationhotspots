@@ -175,8 +175,8 @@ fit_model <- function(out_dir) {
         dplyr::bind_cols(fake_pred) %>%
         dplyr::mutate(pred_def = exp(.pred)) %>%
         (function(x) {
-            saveRDS(x, file = "./results/new_data_tb.rds")
-            readr::write_csv(x, file = "./results/new_data_tb.csv")
+            saveRDS(x, file = file.path(out_dir, "new_data_tb.rds"))
+            readr::write_csv(x, file = file.path(out_dir, "new_data_tb.csv"))
             return(x)
         })
 }
@@ -185,9 +185,10 @@ fit_model <- function(out_dir) {
 
 #' Read and prepare the data for the experiment.
 #'
-#' This functions read the data in the package (`deforestation_grid`), then
-#' it transforms the deforested area from km2 to mt2, it applies a `log`
-#' transformation, and filters out the data with no deforestation.
+#' This functions read the deforestation data from the package
+#' (`deforestation_data`), then it transforms their areas from km2 to mt2, it
+#' applies a `log` transformation, and finally it filters out the data with no
+#' deforestation.
 #'
 #' @param raw A logical. When TRUE, the whole data set is returned. Otherwise,
 #'            only those registers where deforestation is greater than zero are
@@ -199,7 +200,7 @@ fit_model <- function(out_dir) {
     def <- NULL
 
     # Prepare data.
-    data_tb <- prioritizedeforestationhotspots::deforestation_grid %>%
+    data_tb <- prioritizedeforestationhotspots::deforestation_data %>%
         dplyr::mutate(def = def * 1000^2,
                       log_def = log(def))
 
