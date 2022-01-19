@@ -15,7 +15,8 @@ returned.}
 A tibble.
 }
 \description{
-This functions read the data in the package (\code{deforestation_grid}), then
-it transforms the deforested area from km2 to mt2, it applies a \code{log}
-transformation, and filters out the data with no deforestation.
+This functions read the deforestation data from the package
+(\code{deforestation_data}), then it transforms their areas from km2 to mt2, it
+applies a \code{log} transformation, and finally it filters out the data with no
+deforestation.
 }

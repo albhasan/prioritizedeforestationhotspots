@@ -29,9 +29,10 @@ Imports:
     readr,
     recipes,
     rsample,
-    sf,
     tibble,
-    tidyr,
     tune,
     vip,
     workflows
+Suggests:
+    sf,
+    tidyr,
