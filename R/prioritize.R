@@ -1,7 +1,7 @@
 #' Run a experiment several times and compute its accuracy.
 #'
-#' This functions fits a Random Forest model several times then estimates the
-#' accuracy of the iterations of the model.
+#' This function fits several Random Forest models to the data and then
+#' estimates their accuracy.
 #'
 #' @param out_dir    A path to directory for storing results.
 #' @param iterations The number of times the experiment must be repeated.
@@ -90,7 +90,7 @@ estimate_accuracy <- function(out_dir, iterations = 100) {
 
 
 
-#' Fits a model to the data in the package.
+#' This function fits a Random Forest model to the data in the package.
 #'
 #' @param out_dir   A path to directory for storing results.
 #' @return          A tibble
@@ -185,9 +185,9 @@ fit_model <- function(out_dir) {
 
 #' Read and prepare the data for the experiment.
 #'
-#' This functions read the deforestation data from the package
+#' This function reads the deforestation data from the package
 #' (`deforestation_data`), then it transforms their areas from km2 to mt2, it
-#' applies a `log` transformation, and finally it filters out the data with no
+#' applies a `log` transformation, and finally, it filters out the data with no
 #' deforestation.
 #'
 #' @param raw A logical. When TRUE, the whole data set is returned. Otherwise,
@@ -269,7 +269,7 @@ fit_model <- function(out_dir) {
 
 #' Set the workflow.
 #'
-#' This functions set the workflow of the model.
+#' This function set the workflow of the model.
 #'
 #' @param recipe  A recipe object.
 #' @param spec    A model specification.
@@ -285,7 +285,7 @@ fit_model <- function(out_dir) {
 
 #' Tune model
 #'
-#' This functions tunes the model parameters
+#' This function tunes the model parameters
 #'
 #' @param workflow A workflow object.
 #' @param folds    A fold object.
@@ -297,4 +297,3 @@ fit_model <- function(out_dir) {
                     grid = grid) %>%
         return()
 }
-
