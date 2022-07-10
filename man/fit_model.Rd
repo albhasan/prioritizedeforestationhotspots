@@ -2,7 +2,7 @@
 % Please edit documentation in R/prioritize.R
 \name{fit_model}
 \alias{fit_model}
-\title{Fits a model to the data in the package.}
+\title{This function fits a Random Forest model to the data in the package.}
 \usage{
 fit_model(out_dir)
 }
@@ -10,9 +10,9 @@ fit_model(out_dir)
 \item{out_dir}{A path to directory for storing results.}
 }
 \value{
-\preformatted{     A tibble
-}
+\if{html}{\out{<div class="sourceCode">}}\preformatted{     A tibble
+}\if{html}{\out{</div>}}
 }
 \description{
-Fits a model to the data in the package.
+This function fits a Random Forest model to the data in the package.
 }

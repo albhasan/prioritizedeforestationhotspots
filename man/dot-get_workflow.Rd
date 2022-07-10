@@ -12,9 +12,9 @@
 \item{spec}{A model specification.}
 }
 \value{
-\preformatted{   A workflow object.
-}
+\if{html}{\out{<div class="sourceCode">}}\preformatted{   A workflow object.
+}\if{html}{\out{</div>}}
 }
 \description{
-This functions set the workflow of the model.
+This function set the workflow of the model.
 }

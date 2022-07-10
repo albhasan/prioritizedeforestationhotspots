@@ -12,8 +12,8 @@
 \item{my_formula}{A formula object.}
 }
 \value{
-\preformatted{      A recipe object.
-}
+\if{html}{\out{<div class="sourceCode">}}\preformatted{      A recipe object.
+}\if{html}{\out{</div>}}
 }
 \description{
 This function sets the formula to be used by the classification model.

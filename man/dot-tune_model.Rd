@@ -14,9 +14,9 @@
 \item{grid}{An integer.}
 }
 \value{
-\preformatted{    A tune_grid object.
-}
+\if{html}{\out{<div class="sourceCode">}}\preformatted{    A tune_grid object.
+}\if{html}{\out{</div>}}
 }
 \description{
-This functions tunes the model parameters
+This function tunes the model parameters
 }

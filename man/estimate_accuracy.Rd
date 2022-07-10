@@ -12,10 +12,10 @@ estimate_accuracy(out_dir, iterations = 100)
 \item{iterations}{The number of times the experiment must be repeated.}
 }
 \value{
-\preformatted{      A tibble
-}
+\if{html}{\out{<div class="sourceCode">}}\preformatted{      A tibble
+}\if{html}{\out{</div>}}
 }
 \description{
-This functions fits a Random Forest model several times then estimates the
-accuracy of the iterations of the model.
+This function fits several Random Forest models to the data and then
+estimates their accuracy.
 }

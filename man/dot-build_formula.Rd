@@ -7,8 +7,8 @@
 .build_formula()
 }
 \value{
-\preformatted{   A formula object.
-}
+\if{html}{\out{<div class="sourceCode">}}\preformatted{   A formula object.
+}\if{html}{\out{</div>}}
 }
 \description{
 This function builds formula objects.

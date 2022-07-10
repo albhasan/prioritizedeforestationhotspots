@@ -9,7 +9,8 @@
 This package introduces a method for prioritizing deforestation hotspots
 to support law enforcement actions in the Brazilian Amazon, as describen
 in the paper entitled: *Science-based planning can support law
-enforcement actions to curb deforestation in the Brazilian Amazon*.
+enforcement actions to curb deforestation in the Brazilian Amazon* by
+Mataveli et at, available at <https://doi.org/10.1111/conl.12908>
 
 ## Installation
 
