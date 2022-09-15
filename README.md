@@ -10,9 +10,10 @@ This package introduces a method for prioritizing deforestation hotspots
 to support law enforcement actions in the Brazilian Amazon, as describen
 in the paper entitled: *Science-based planning can support law
 enforcement actions to curb deforestation in the Brazilian Amazon* by
-Mataveli et at, available at <https://doi.org/10.1111/conl.12908>
+Mataveli et at. (2022) \[1\], available at
+<https://doi.org/10.1111/conl.12908>
 
-This is the abstract of the aforementioned paper:
+This is the abstract of the aforementioned paper \[1\]:
 
 While Brazil publicly committed to reduce deforestation in Amazonia at
 the 26th Conference of the Parties (COP26), the Brazilian parliament is
@@ -35,6 +36,11 @@ Amazônia 21/22.” Optimizing the detection of priority areas for curbing
 deforestation, as proposed here, is the first step to reducing
 deforestation rates and comply with the Brazilian legal commitment of
 3925 km2 year−1.
+
+\[1\] Mataveli, G., de Oliveira, G., Chaves, M. E., Dalagnol, R.,
+Wagner, F. H., Ipia, A. H., … & Aragão, L. E. (2022). Science‐based
+planning can support law enforcement actions to curb deforestation in
+the Brazilian Amazon. Conservation Letters, e12908.
 
 ## Installation
 
@@ -155,7 +161,7 @@ def_sf %>%
                         breaks = c(0.1, 1, 10, 100),
                         low = "green",
                         high = "red") +
-    facet_wrap(~ref_year) +
+    facet_wrap(~ref_year, ncol = 1) +
     ggtitle("Deforestation")
 #> Warning: Transformation introduced infinite values in discrete y-axis
 ```
@@ -172,7 +178,7 @@ def_sf %>%
                         breaks = c(0.01, 0.10, 1, 10, 100),
                         low = "green",
                         high = "red") +
-    facet_wrap(~ref_year) +
+    facet_wrap(~ref_year, ncol = 1) +
     ggtitle("Deforestation in the year before")
 #> Warning: Transformation introduced infinite values in discrete y-axis
 ```
@@ -189,7 +195,7 @@ def_sf %>%
                         breaks = c(0.01, 0.10, 1, 10, 100),
                         low = "green",
                         high = "red") +
-    facet_wrap(~ref_year) +
+    facet_wrap(~ref_year, ncol = 1) +
     ggtitle("Deforestation 2 years before")
 #> Warning: Transformation introduced infinite values in discrete y-axis
 ```
@@ -206,7 +212,7 @@ def_sf %>%
                         breaks = c(0.01, 0.10, 1, 10, 100),
                         low = "green",
                         high = "red") +
-    facet_wrap(~ref_year) +
+    facet_wrap(~ref_year, ncol = 1) +
     ggtitle("Deforestation 4 years before")
 #> Warning: Transformation introduced infinite values in discrete y-axis
 ```
@@ -224,7 +230,7 @@ def_sf %>%
                         breaks = c(25, 50, 100, 250, 500, 900),
                         low = "green",
                         high = "red") +
-    facet_wrap(~ref_year) +
+    facet_wrap(~ref_year, ncol = 1) +
     ggtitle(paste("Distance to the closest grid centroid with more than 1%",
                   "deforestation in year before"))
 ```
@@ -242,7 +248,7 @@ def_sf %>%
                         breaks = c(25, 50, 100, 250, 500, 1000),
                         low = "green",
                         high = "red") +
-    facet_wrap(~ref_year) +
+    facet_wrap(~ref_year, ncol = 1) +
     ggtitle(paste("Distance to the closest grid centroid with more than 2%",
                   "deforestation in year before"))
 ```
@@ -259,7 +265,7 @@ def_sf %>%
                         breaks = c(1, 5, 50, 500),
                         low = "green",
                         high = "red") +
-    facet_wrap(~ref_year) +
+    facet_wrap(~ref_year, ncol = 1) +
     ggtitle("Number of active fires in the year before")
 #> Warning: Transformation introduced infinite values in discrete y-axis
 ```
