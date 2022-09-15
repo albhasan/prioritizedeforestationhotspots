@@ -4,6 +4,8 @@
 # prioritizedeforestationhotspots
 
 <!-- badges: start -->
+
+[![R-CMD-check](https://github.com/albhasan/prioritizedeforestationhotspots/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/albhasan/prioritizedeforestationhotspots/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
 This package introduces a method for prioritizing deforestation hotspots
@@ -178,7 +180,7 @@ def_sf %>%
                         breaks = c(0.01, 0.10, 1, 10, 100),
                         low = "green",
                         high = "red") +
-    facet_wrap(~ref_year, ncol = 1) +
+    facet_wrap(~ref_year) +
     ggtitle("Deforestation in the year before")
 #> Warning: Transformation introduced infinite values in discrete y-axis
 ```
@@ -195,7 +197,7 @@ def_sf %>%
                         breaks = c(0.01, 0.10, 1, 10, 100),
                         low = "green",
                         high = "red") +
-    facet_wrap(~ref_year, ncol = 1) +
+    facet_wrap(~ref_year) +
     ggtitle("Deforestation 2 years before")
 #> Warning: Transformation introduced infinite values in discrete y-axis
 ```
@@ -212,7 +214,7 @@ def_sf %>%
                         breaks = c(0.01, 0.10, 1, 10, 100),
                         low = "green",
                         high = "red") +
-    facet_wrap(~ref_year, ncol = 1) +
+    facet_wrap(~ref_year) +
     ggtitle("Deforestation 4 years before")
 #> Warning: Transformation introduced infinite values in discrete y-axis
 ```
@@ -230,7 +232,7 @@ def_sf %>%
                         breaks = c(25, 50, 100, 250, 500, 900),
                         low = "green",
                         high = "red") +
-    facet_wrap(~ref_year, ncol = 1) +
+    facet_wrap(~ref_year) +
     ggtitle(paste("Distance to the closest grid centroid with more than 1%",
                   "deforestation in year before"))
 ```
@@ -248,7 +250,7 @@ def_sf %>%
                         breaks = c(25, 50, 100, 250, 500, 1000),
                         low = "green",
                         high = "red") +
-    facet_wrap(~ref_year, ncol = 1) +
+    facet_wrap(~ref_year) +
     ggtitle(paste("Distance to the closest grid centroid with more than 2%",
                   "deforestation in year before"))
 ```
@@ -265,7 +267,7 @@ def_sf %>%
                         breaks = c(1, 5, 50, 500),
                         low = "green",
                         high = "red") +
-    facet_wrap(~ref_year, ncol = 1) +
+    facet_wrap(~ref_year) +
     ggtitle("Number of active fires in the year before")
 #> Warning: Transformation introduced infinite values in discrete y-axis
 ```
