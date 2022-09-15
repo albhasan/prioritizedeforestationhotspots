@@ -8,10 +8,10 @@
 A data frame with 27132 rows and 14 variables:
 \describe{
 \item{id}{Cell identifier}
-\item{area_PA}{area protected or indigenous lands in the grid (square kilometres)}
+\item{area_PA}{protected areas or indigenous lands in the grid (square kilometres)}
 \item{dist_hidro}{distance to the closest waterway (kilometres)}
 \item{dist_road}{distance to the closest highway (kilometres)}
-\item{dist_road_hidro}{distance to the closest highway or to waterway (kilometres)}
+\item{dist_road_hidro}{distance to the closest highway or waterway (kilometres)}
 \item{ref_year}{reference year}
 \item{def}{deforestation in the reference year (square kilometres)}
 \item{def_1_ly}{deforestation in the year before the reference year}

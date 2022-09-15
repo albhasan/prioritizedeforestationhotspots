@@ -15,7 +15,7 @@ Description: A method for prioritizing deforestation hotspots to support law enf
 License: MIT + file LICENSE
 Encoding: UTF-8
 Roxygen: list(markdown = TRUE)
-RoxygenNote: 7.2.0
+RoxygenNote: 7.2.1
 LazyData: true
 Depends: 
     R (>= 2.10)
