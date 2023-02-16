@@ -81,7 +81,7 @@ library(prioritizedeforestationhotspots)
 
 This example shows the resulting deforestation hotspots.
 
-```{r maps}
+```{r map_results}
 
 library(prioritizedeforestationhotspots)
 library(dplyr)
@@ -124,16 +124,17 @@ results %>%
     #geom_sf(data = geobr::read_amazon()) +
     geom_sf(data = filter(geobr::read_biomes(), name_biome == "Amazônia")) +
     geom_sf(aes(color = ref_year)) +
-    ggtitle("Priority areas (deforestation hotspots)") +
+    facet_wrap(~ref_year) +
+    theme(axis.text.x = element_text(angle = 90)) +
     theme(legend.title=element_blank()) +
-    facet_wrap(~ref_year)
+    ggtitle("Priority areas (deforestation hotspots)") 
 
 
 ```
 
 This example shows some of the data included in this package.
 
-```{r maps}
+```{r map_data}
 
 library(prioritizedeforestationhotspots)
 library(dplyr)
@@ -153,6 +154,7 @@ def_sf %>%
                         breaks = c(1, 10, 100, 600),
                         low = "green",
                         high = "red") +
+    theme(axis.text.x = element_text(angle = 90)) +
     ggtitle("Protected areas or indigenous lands in the grid")
 
 def_sf %>%
@@ -163,6 +165,7 @@ def_sf %>%
                         breaks = c(1, 10, 50, 150),
                         low = "green",
                         high = "red") +
+    theme(axis.text.x = element_text(angle = 90)) +
     ggtitle("Distance to the closest waterway")
 
 def_sf %>%
@@ -183,6 +186,7 @@ def_sf %>%
                         breaks = c(1, 5, 50),
                         low = "green",
                         high = "red") +
+    theme(axis.text.x = element_text(angle = 90)) +
     ggtitle("Distance to the closest highway or waterway")
 
 def_sf %>%
@@ -195,6 +199,7 @@ def_sf %>%
                         low = "green",
                         high = "red") +
     facet_wrap(~ref_year, ncol = 1) +
+    theme(axis.text.x = element_text(angle = 90)) +
     ggtitle("Deforestation")
 
 def_sf %>%
@@ -206,6 +211,7 @@ def_sf %>%
                         low = "green",
                         high = "red") +
     facet_wrap(~ref_year) +
+    theme(axis.text.x = element_text(angle = 90)) +
     ggtitle("Deforestation in the year before")
 
 def_sf %>%
@@ -217,6 +223,7 @@ def_sf %>%
                         low = "green",
                         high = "red") +
     facet_wrap(~ref_year) +
+    theme(axis.text.x = element_text(angle = 90)) +
     ggtitle("Deforestation 2 years before")
 
 def_sf %>%
@@ -228,6 +235,7 @@ def_sf %>%
                         low = "green",
                         high = "red") +
     facet_wrap(~ref_year) +
+    theme(axis.text.x = element_text(angle = 90)) +
     ggtitle("Deforestation 4 years before")
 
 def_sf %>%
@@ -240,6 +248,7 @@ def_sf %>%
                         low = "green",
                         high = "red") +
     facet_wrap(~ref_year) +
+    theme(axis.text.x = element_text(angle = 90)) +
     ggtitle(paste("Distance to the closest grid centroid with more than 1%",
                   "deforestation in year before"))
 
@@ -253,6 +262,7 @@ def_sf %>%
                         low = "green",
                         high = "red") +
     facet_wrap(~ref_year) +
+    theme(axis.text.x = element_text(angle = 90)) +
     ggtitle(paste("Distance to the closest grid centroid with more than 2%",
                   "deforestation in year before"))
 
@@ -265,6 +275,7 @@ def_sf %>%
                         low = "green",
                         high = "red") +
     facet_wrap(~ref_year) +
+    theme(axis.text.x = element_text(angle = 90)) +
     ggtitle("Number of active fires in the year before")
 
 ```
