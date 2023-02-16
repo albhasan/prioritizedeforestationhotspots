@@ -6,8 +6,9 @@ library(purrr)
 library(readxl)
 library(sf)
 library(usethis)
+library(ensurer)
 
-data_file <- "./data-raw/Random_Forest.xlsx"
+data_file <- "./data-raw/Random_Forest_v4.xlsx"
 grid_file <- "./data-raw/Grade_Random_Forest.shp"
 stopifnot(all(file.exists(data_file, grid_file)))
 
@@ -57,6 +58,16 @@ col_names_ls <- list(
        dist_1_percent_ly    = "Distância a ponto de grade > 1% desmatamentono ano anterior (km)",
        dist_2_percent_ly    = "Distância a ponto de grade > 2% desmatamento acumulado em 2 anos (km)",
        active_fires_ly      = "Focos de Calor Ano Anterior"
+   ),
+
+   "2023" = c(
+       id                   = "ID",
+       def_1_ly             = "Desmatamento Ano Anterior (km2)",
+       def_2_ly             = "Desmatamento Acumulado 2 Anos Anteriores (km2)",
+       def_4_ly             = "Desmatamento Acumulado 4 Anos Anteriores (km2)",
+       dist_1_percent_ly    = "Distância a ponto de grade > 1% desmatamentono ano anterior (km)",
+       dist_2_percent_ly    = "Distância a ponto de grade > 2% desmatamento acumulado em 2 anos (km)",
+       active_fires_ly      = "Focos de Calor Ano Anterior"
    )
 )
 
@@ -75,8 +86,13 @@ constant_vars <- col_names_ls %>%
 variable_ls <- list()
 constant_ls <- list()
 for (my_sheet in readxl::excel_sheets(data_file)) {
-    sheet_tb <- data_file %>%
+    sheet_tb <-
+        data_file %>%
         readxl::read_excel(sheet = my_sheet) %>%
+        ensurer::ensure_that(
+            all(col_names_ls[[my_sheet]] %in% colnames(.)),
+            err_desc = sprintf("Unknown or missing columns: %s", my_sheet)
+        ) %>%
         dplyr::rename(col_names_ls[[my_sheet]]) %>%
         dplyr::mutate(ref_year = my_sheet) %>%
         ensurer::ensure_that(length(unique(.$id)) == nrow(.),
@@ -103,7 +119,8 @@ for (i in seq_along(constant_ls)) {
     constant_tb <- constant_tb %>%
         dplyr::full_join(constant_ls[[i]], by = "id")
 }
-deforestation_tb <- constant_tb %>%
+deforestation_tb <-
+    constant_tb %>%
     dplyr::select(id,
                   `2019` = def_2019,
                   `2020` = def_2020) %>%
@@ -115,7 +132,8 @@ constant_tb <- constant_tb %>%
 
 
 # Build data set.
-deforestation_data <- variable_ls %>%
+deforestation_data <-
+    variable_ls %>%
     dplyr::bind_rows() %>%
     dplyr::left_join(constant_tb, by = "id") %>%
     dplyr::left_join(deforestation_tb, by = c("id", "ref_year")) %>%
