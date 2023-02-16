@@ -79,6 +79,58 @@ library(prioritizedeforestationhotspots)
 
 ```
 
+This example shows the resulting deforestation hotspots.
+
+```{r maps}
+
+library(prioritizedeforestationhotspots)
+library(dplyr)
+library(geobr)
+library(ggplot2)
+library(purrr)
+library(sf)
+library(tidyr)
+library(tools)
+
+# Build a tibble with the paths to the results.
+results_tb <- 
+    system.file("extdata", "results", 
+            package = "prioritizedeforestationhotspots") %>%
+    list.files(pattern = "*.shp$", 
+               full.names = TRUE) %>%
+    as_tibble() %>%
+    rename(file_path = value) %>%
+    mutate(
+        file_name = file_path_sans_ext(basename(file_path))
+    ) %>%
+    separate_wider_delim(file_name, 
+                                delim ="_", 
+                                names = c(NA, NA, "ref_year")) %>%
+    mutate(vector_data = map2(file_path, ref_year,
+        function(f, y) {
+            f %>%
+                read_sf() %>%
+                mutate(ref_year = y) %>%
+                return()
+        })
+    )
+
+# Merge the results of different reference years into a single sf object.
+results <- do.call(rbind, results_tb[["vector_data"]])
+
+# Build a map.
+results %>%
+    ggplot() +
+    #geom_sf(data = geobr::read_amazon()) +
+    geom_sf(data = filter(geobr::read_biomes(), name_biome == "Amazônia")) +
+    geom_sf(aes(color = ref_year)) +
+    ggtitle("Priority areas (deforestation hotspots)") +
+    theme(legend.title=element_blank()) +
+    facet_wrap(~ref_year)
+
+
+```
+
 This example shows some of the data included in this package.
 
 ```{r maps}
