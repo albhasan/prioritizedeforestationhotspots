@@ -3,4 +3,5 @@
 export("%>%")
 export(estimate_accuracy)
 export(fit_model)
+export(results_to_shp)
 importFrom(magrittr,"%>%")
