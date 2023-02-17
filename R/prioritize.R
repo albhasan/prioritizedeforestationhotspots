@@ -93,10 +93,11 @@ estimate_accuracy <- function(out_dir, iterations = 100) {
 #' This function fits a Random Forest model to the data in the package.
 #'
 #' @param out_dir   A path to directory for storing results.
+#' @param seed      An integer. A seed number to pass to `set.seed`.
 #' @return          A tibble
 #'
 #' @export
-fit_model <- function(out_dir) {
+fit_model <- function(out_dir, seed = 42) {
     .pred <- NULL
     stopifnot(dir.exists(out_dir))
 
@@ -104,7 +105,7 @@ fit_model <- function(out_dir) {
 
     #---- Data split ----
     data_train <- data_tb
-    set.seed(42)
+    set.seed(seed)
     data_folds <- rsample::bootstraps(data_train)
 
     #---- Recipe ----
@@ -173,6 +174,7 @@ fit_model <- function(out_dir) {
     fake_pred <- stats::predict(final_model, fake_new_data)
     new_data_tb <- raw_tb %>%
         dplyr::bind_cols(fake_pred) %>%
+        # NOTE: Here we take undo the logarithm
         dplyr::mutate(pred_def = exp(.pred)) %>%
         (function(x) {
             saveRDS(x, file = file.path(out_dir, "new_data_tb.rds"))
@@ -181,6 +183,88 @@ fit_model <- function(out_dir) {
         })
 }
 
+
+
+#' This function joins the fitted model to the grid. It also saves the results
+#' as a shapefile in the out directory under the name `priority_classes.shp`.
+#'
+#' @param out_dir   A path to directory for storing results.
+#' @return          An sf object with the priority classes.
+#'
+#' @export
+results_to_shp <- function(out_dir) {
+    pred_def <- ref_year <- id <- priority <- NULL
+
+    # Read the results of applying the model.
+    results_tb <-
+        out_dir %>%
+            list.files(pattern = "new_data_tb.rds",
+                       full.names = TRUE) %>%
+        readRDS() %>%
+        # NOTE: We convert from hectares to km2.
+        dplyr::mutate(pred_def_km2 = pred_def/1000^2)
+
+    # Get the reference years.
+    ref_years <-
+        results_tb %>%
+        dplyr::distinct(ref_year) %>%
+        dplyr::select(ref_year)
+
+    # Join the deforestation grid to the results of each year.
+    ref_years <-
+        ref_years %>%
+        dplyr::mutate(sf_obj = purrr::map(ref_year, .match_grid_year,
+                                          results_tb = results_tb))
+
+    results_sf <-
+        do.call(rbind, ref_years[["sf_obj"]]) %>%
+        dplyr::select(id, ref_year, priority)
+
+    results_tb <-
+        results_sf %>%
+        sf::st_drop_geometry() %>%
+        tidyr::pivot_wider(names_from = "ref_year", values_from = "priority",
+        names_prefix = "pri")
+
+    results_sf <-
+        prioritizedeforestationhotspots::deforestation_grid %>%
+        dplyr::left_join(results_tb, by = "id")
+
+    results_sf %>%
+        sf::write_sf(file.path(out_dir, "priority_classes.shp"))
+
+    return(results_sf)
+}
+
+#' Join results to deforestation grid.
+#'
+#' The utility function takes the results, filters them by one year, classifies
+#' them into Low, Average, and High using the 0.7 and 0.9 quantiles, and joins
+#' the data to the deforestation grid.
+#'
+#' @param y          A character representing a single year.
+#' @param results_tb A tibble with the results of fitting the model.
+#'
+#' @return           An sf object.
+.match_grid_year <- function(y, results_tb) {
+    ref_year <- pred_def_km2 <- NULL
+
+    results_year <-
+        results_tb %>%
+        dplyr::filter(ref_year == y) %>%
+        dplyr::mutate(
+            priority = cut(
+                pred_def_km2,
+                labels = c("Low", "Average", "High"),
+                include.lowest = TRUE,
+                breaks = stats::quantile(pred_def_km2,
+                                         probs = c(0, 0.7, 0.9, 1.0))))
+
+    prioritizedeforestationhotspots::deforestation_grid %>%
+        dplyr::left_join(results_year, by = "id") %>%
+        return()
+
+}
 
 
 #' Read and prepare the data for the experiment.
@@ -201,6 +285,8 @@ fit_model <- function(out_dir) {
 
     # Prepare data.
     data_tb <- prioritizedeforestationhotspots::deforestation_data %>%
+        # NOTE: Deforestation data is transformed from km2 to hectares.
+        #       And the logarithm is applid.
         dplyr::mutate(def = def * 1000^2,
                       log_def = log(def))
 

@@ -4,10 +4,12 @@
 \alias{fit_model}
 \title{This function fits a Random Forest model to the data in the package.}
 \usage{
-fit_model(out_dir)
+fit_model(out_dir, seed = 42)
 }
 \arguments{
 \item{out_dir}{A path to directory for storing results.}
+
+\item{seed}{An integer. A seed number to pass to \code{set.seed}.}
 }
 \value{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{     A tibble

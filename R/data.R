@@ -27,12 +27,13 @@
 #' Deforestation grid for the Brazilian Amazon
 #'
 #' A dataset containing spatial data regarding the Brazilian Amazon.
-#' These data represents a regular grid where each cell has an area of 25 square
-#' kilometres.
+#' These data represents a regular grid where each cell has an approximated
+#  area of 25*25 kilometres.
 #'
 #' @format A data frame with 6783 rows and 2 variables:
 #' \describe{
 #'    \item{id}{Cell identifier}
 #'    \item{geometry}{Cell geometry}
+#'    \item{area_km2}{Area of each cell in square kilometers}
 #' }
 "deforestation_grid"

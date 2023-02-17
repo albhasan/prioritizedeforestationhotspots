@@ -56,7 +56,7 @@ legal commitment of 3925 km2 year−1.
 
 ## Installation
 
-You can install the development version of prioritizedeforestationhotspots from [GitHub](https://github.com/) with:
+You can install the latest version of prioritizedeforestationhotspots from [GitHub](https://github.com/):
 
 ``` r
 # install.packages("devtools")
@@ -72,14 +72,16 @@ This basic example produces results similar to those shown in the aforementioned
 library(prioritizedeforestationhotspots)
 
 ## Run the model
-## NOTE: This can take long!
 # out_dir <- "~/Documents/prioritize_res"
+## NOTE: This takes long to run!
 # estimate_accuracy(out_dir)
 # fit_model(out_dir)
+# results_to_shp(out_dir)
 
 ```
 
-This example shows the resulting deforestation hotspots.
+If you don't have time to run the model, you can just load the results.  This 
+example shows the deforestation hotspots in a map:
 
 ```{r map_results}
 
@@ -132,7 +134,8 @@ results %>%
 
 ```
 
-This example shows some of the data included in this package.
+We also included the variables used for the model.  This example shows some of 
+the data included in this package:
 
 ```{r map_data}
 
