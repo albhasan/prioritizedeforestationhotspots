@@ -10,7 +10,9 @@ library(ensurer)
 
 data_file <- "./data-raw/Random_Forest_v4.xlsx"
 grid_file <- "./data-raw/Grade_Random_Forest.shp"
-stopifnot(all(file.exists(data_file, grid_file)))
+area_file <- "./data-raw/Area_Grade.xlsx"
+
+stopifnot(all(file.exists(data_file, grid_file, area_file)))
 
 # Column names in data_file.
 col_names_ls <- list(
@@ -154,12 +156,20 @@ deforestation_data <-
     )
 
 
+# Read and prepare the area data.
+area_tb <-
+    area_file %>%
+    readxl::read_excel(sheet = "Planilha1") %>%
+    dplyr::rename(area_km2 = "Área Grade (km2)")
+
 # Read and prepare the grid.
-deforestation_grid <- grid_file %>%
+deforestation_grid <-
+    grid_file %>%
     sf::st_read() %>%
     sf::st_transform(crs = 4326) %>%
-    dplyr::select(id = Id)
-
+    dplyr::select(id = Id) %>%
+    dplyr::left_join(area_tb, by = "id")
 
 # Save data.
 usethis::use_data(deforestation_data, deforestation_grid, overwrite = TRUE)
+

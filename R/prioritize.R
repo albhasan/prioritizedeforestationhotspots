@@ -93,10 +93,11 @@ estimate_accuracy <- function(out_dir, iterations = 100) {
 #' This function fits a Random Forest model to the data in the package.
 #'
 #' @param out_dir   A path to directory for storing results.
+#' @param seed      An integer. A seed number to pass to `set.seed`.
 #' @return          A tibble
 #'
 #' @export
-fit_model <- function(out_dir) {
+fit_model <- function(out_dir, seed = 42) {
     .pred <- NULL
     stopifnot(dir.exists(out_dir))
 
@@ -104,7 +105,7 @@ fit_model <- function(out_dir) {
 
     #---- Data split ----
     data_train <- data_tb
-    set.seed(42)
+    set.seed(seed)
     data_folds <- rsample::bootstraps(data_train)
 
     #---- Recipe ----
