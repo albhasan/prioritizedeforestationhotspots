@@ -5,10 +5,19 @@
 \title{This function joins the fitted model to the grid. It also saves the results
 as a shapefile in the out directory under the name \code{priority_classes.shp}.}
 \usage{
-results_to_shp(out_dir)
+results_to_shp(
+  out_dir,
+  probs = c(0, 0.7, 0.9, 1),
+  labels = c("Low", "Average", "High")
+)
 }
 \arguments{
 \item{out_dir}{A path to directory for storing results.}
+
+\item{probs}{A numeric representing where to cut the priority.}
+
+\item{labels}{A character with labels for the priority categories. The
+number of labels must be one less than the number of probs.}
 }
 \value{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{     An sf object with the priority classes.
