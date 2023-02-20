@@ -20,7 +20,6 @@ This function fits several Random Forest models to the data and then
 estimates their accuracy.
 }
 \examples{
-
 \dontrun{
 library(prioritizedeforestationhotspots)
 out_dir <- "~/Documents/prioritize_res"

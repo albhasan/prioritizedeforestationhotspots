@@ -14,14 +14,16 @@ fit_model(out_dir, seed = 42)
 \value{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{     A tibble
 }\if{html}{\out{</div>}}
-
+}
+\description{
+This function fits a Random Forest model to the data in the package.
+}
+\examples{
 \dontrun{
 library(sf)
 library(prioritizedeforestationhotspots)
 out_dir <- "~/Documents/prioritize_res"
 fit_model(out_dir)
 }
-}
-\description{
-This function fits a Random Forest model to the data in the package.
+
 }

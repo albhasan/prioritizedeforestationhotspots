@@ -6,8 +6,8 @@
 #' @param out_dir    A path to directory for storing results.
 #' @param iterations The number of times the experiment must be repeated.
 #' @return           A tibble
-#'@examples
 #'
+#'@examples
 #'\dontrun{
 #'library(prioritizedeforestationhotspots)
 #'out_dir <- "~/Documents/prioritize_res"
@@ -103,6 +103,7 @@ estimate_accuracy <- function(out_dir, iterations = 100) {
 #' @param seed      An integer. A seed number to pass to `set.seed`.
 #' @return          A tibble
 #'
+#'@examples
 #'\dontrun{
 #'library(sf)
 #'library(prioritizedeforestationhotspots)
@@ -208,6 +209,7 @@ fit_model <- function(out_dir, seed = 42) {
 #'                  number of labels must be one less than the number of probs.
 #' @return          An sf object with the priority classes.
 #'
+#'@examples
 #'\dontrun{
 #'library(sf)
 #'library(prioritizedeforestationhotspots)
