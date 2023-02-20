@@ -18,3 +18,12 @@ fit_model(out_dir, seed = 42)
 \description{
 This function fits a Random Forest model to the data in the package.
 }
+\examples{
+\dontrun{
+library(sf)
+library(prioritizedeforestationhotspots)
+out_dir <- "~/Documents/prioritize_res"
+fit_model(out_dir)
+}
+
+}

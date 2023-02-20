@@ -7,6 +7,13 @@
 #' @param iterations The number of times the experiment must be repeated.
 #' @return           A tibble
 #'
+#'@examples
+#'\dontrun{
+#'library(prioritizedeforestationhotspots)
+#'out_dir <- "~/Documents/prioritize_res"
+#'estimate_accuracy(out_dir)
+#'}
+#'
 #' @export
 estimate_accuracy <- function(out_dir, iterations = 100) {
     stopifnot(dir.exists(out_dir))
@@ -95,6 +102,14 @@ estimate_accuracy <- function(out_dir, iterations = 100) {
 #' @param out_dir   A path to directory for storing results.
 #' @param seed      An integer. A seed number to pass to `set.seed`.
 #' @return          A tibble
+#'
+#'@examples
+#'\dontrun{
+#'library(sf)
+#'library(prioritizedeforestationhotspots)
+#'out_dir <- "~/Documents/prioritize_res"
+#'fit_model(out_dir)
+#'}
 #'
 #' @export
 fit_model <- function(out_dir, seed = 42) {
@@ -189,10 +204,23 @@ fit_model <- function(out_dir, seed = 42) {
 #' as a shapefile in the out directory under the name `priority_classes.shp`.
 #'
 #' @param out_dir   A path to directory for storing results.
+#' @param probs     A numeric representing where to cut the priority.
+#' @param labels    A character with labels for the priority categories. The
+#'                  number of labels must be one less than the number of probs.
 #' @return          An sf object with the priority classes.
 #'
+#'@examples
+#'\dontrun{
+#'library(sf)
+#'library(prioritizedeforestationhotspots)
+#'out_dir <- "~/Documents/prioritize_res"
+#'fit_model(out_dir)
+#'results_to_shp(out_dir)
+#'}
+#'
 #' @export
-results_to_shp <- function(out_dir) {
+results_to_shp <- function(out_dir, probs = c(0, 0.7, 0.9, 1.0),
+                           labels = c("Low", "Average", "High")) {
     pred_def <- ref_year <- id <- priority <- NULL
 
     # Read the results of applying the model.
@@ -214,7 +242,8 @@ results_to_shp <- function(out_dir) {
     ref_years <-
         ref_years %>%
         dplyr::mutate(sf_obj = purrr::map(ref_year, .match_grid_year,
-                                          results_tb = results_tb))
+                                          results_tb = results_tb,
+                                          probs = probs, labels = labels))
 
     results_sf <-
         do.call(rbind, ref_years[["sf_obj"]]) %>%
@@ -244,10 +273,16 @@ results_to_shp <- function(out_dir) {
 #'
 #' @param y          A character representing a single year.
 #' @param results_tb A tibble with the results of fitting the model.
+#' @param probs      A numeric with probability values.
+#' @param labels     A character with labels.
 #'
 #' @return           An sf object.
-.match_grid_year <- function(y, results_tb) {
+.match_grid_year <- function(y, results_tb, probs, labels) {
     ref_year <- pred_def_km2 <- NULL
+    stopifnot("Missmatch between category cuts and their labels" =
+              length(probs) == length(labels) - 1)
+    stopifnot("Probabilities must be between 0 and 1" =
+              all(probs >= 0) && all(probs <= 1))
 
     results_year <-
         results_tb %>%
@@ -255,10 +290,10 @@ results_to_shp <- function(out_dir) {
         dplyr::mutate(
             priority = cut(
                 pred_def_km2,
-                labels = c("Low", "Average", "High"),
+                labels = labels,
                 include.lowest = TRUE,
                 breaks = stats::quantile(pred_def_km2,
-                                         probs = c(0, 0.7, 0.9, 1.0))))
+                                         probs = probs)))
 
     prioritizedeforestationhotspots::deforestation_grid %>%
         dplyr::left_join(results_year, by = "id") %>%

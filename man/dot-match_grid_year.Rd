@@ -4,12 +4,16 @@
 \alias{.match_grid_year}
 \title{Join results to deforestation grid.}
 \usage{
-.match_grid_year(y, results_tb)
+.match_grid_year(y, results_tb, probs, labels)
 }
 \arguments{
 \item{y}{A character representing a single year.}
 
 \item{results_tb}{A tibble with the results of fitting the model.}
+
+\item{probs}{A numeric with probability values.}
+
+\item{labels}{A character with labels.}
 }
 \value{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{      An sf object.

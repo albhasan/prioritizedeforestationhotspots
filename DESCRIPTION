@@ -1,6 +1,6 @@
 Package: prioritizedeforestationhotspots
 Title: Prioritization of Deforestation Hotspots to Support Law Enforcement
-Version: 0.0.0.9003
+Version: 0.0.0.9004
 Authors@R: c(
     person("Guilherme", "Mataveli", email = "mataveli@alumni.usp.br",        role = c("aut"), comment = c(ORCID = "0000-0002-4645-0117")),
     person("Gabriel", "de Oliveira", email = "deoliveira@southalabama.edu",  role = c("aut"), comment = c(ORCID = "0000-0002-1940-6874")),
@@ -36,5 +36,4 @@ Imports:
     vip,
     workflows
 Suggests:
-    tidyr,
-    geobr
+    tidyr

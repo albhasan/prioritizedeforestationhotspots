@@ -63,69 +63,75 @@ You can install the latest version of prioritizedeforestationhotspots from [GitH
 devtools::install_github("albhasan/prioritizedeforestationhotspots")
 ```
 
-## Example
+## Examples
 
-This basic example produces results similar to those shown in the aforementioned paper:
 
-```{r example}
+### Run the model
 
+This basic example produces results similar to those shown in the 
+aforementioned paper (note that estimating the model accuracy takes hours!):
+
+```{r example, eval=FALSE}
+
+library(sf)
 library(prioritizedeforestationhotspots)
 
-## Run the model
-# out_dir <- "~/Documents/prioritize_res"
-## NOTE: This takes long to run!
-# estimate_accuracy(out_dir)
-# fit_model(out_dir)
-# results_to_shp(out_dir)
+# Run the model
+out_dir <- "~/Documents/prioritize_res"
+# NOTE: This takes long to run!
+estimate_accuracy(out_dir)
+fit_model(out_dir)
+results_to_shp(out_dir)
 
 ```
 
-If you don't have time to run the model, you can just load the results.  This 
-example shows the deforestation hotspots in a map:
 
-```{r map_results}
+### Plot the results (without runing the model)
+
+If you don't have time to run the model, you can just load the results already
+stored in the package.  This example shows the deforestation hotspots in a map:
+
+```{r map_results, warning=FALSE, message=FALSE}
 
 library(prioritizedeforestationhotspots)
 library(dplyr)
-library(geobr)
 library(ggplot2)
 library(purrr)
 library(sf)
 library(tidyr)
+library(tidyselect)
 library(tools)
 
-# Build a tibble with the paths to the results.
-results_tb <- 
-    system.file("extdata", "results", 
-            package = "prioritizedeforestationhotspots") %>%
-    list.files(pattern = "*.shp$", 
-               full.names = TRUE) %>%
-    as_tibble() %>%
-    rename(file_path = value) %>%
-    mutate(
-        file_name = file_path_sans_ext(basename(file_path))
-    ) %>%
-    separate_wider_delim(file_name, 
-                                delim ="_", 
-                                names = c(NA, NA, "ref_year")) %>%
-    mutate(vector_data = map2(file_path, ref_year,
-        function(f, y) {
-            f %>%
-                read_sf() %>%
-                mutate(ref_year = y) %>%
-                return()
-        })
-    )
+# Read the result data from the package.
+priority_sf <- 
+    system.file("extdata", "results", "priority_classes.shp", 
+                package = "prioritizedeforestationhotspots") %>%
+    read_sf()
 
-# Merge the results of different reference years into a single sf object.
-results <- do.call(rbind, results_tb[["vector_data"]])
+# Format the data.
+priority_tb <- 
+    priority_sf %>%
+    st_drop_geometry() %>%
+    pivot_longer(cols = starts_with("pri"), 
+                 names_prefix = "pri",
+                 names_to = "ref_year", 
+                 values_to = "priority") 
 
-# Build a map.
-results %>%
+# Arrange data into a sf object.
+priority_sf <- 
+    priority_sf %>%
+    select(id) %>%
+    right_join(priority_tb,  
+               by = "id", 
+               multiple = "all") %>%
+    mutate(priority = factor(priority, 
+                             labels = c("High", "Average", "Low"),
+                             ordered = TRUE))
+
+# Plot. 
+priority_sf %>%
     ggplot() +
-    #geom_sf(data = geobr::read_amazon()) +
-    geom_sf(data = filter(geobr::read_biomes(), name_biome == "Amazônia")) +
-    geom_sf(aes(color = ref_year)) +
+    geom_sf(aes(fill = priority), lwd = 0) +
     facet_wrap(~ref_year) +
     theme(axis.text.x = element_text(angle = 90)) +
     theme(legend.title=element_blank()) +
@@ -136,6 +142,9 @@ results %>%
 
 We also included the variables used for the model.  This example shows some of 
 the data included in this package:
+
+
+### Plot the model variables
 
 ```{r map_data}
 
