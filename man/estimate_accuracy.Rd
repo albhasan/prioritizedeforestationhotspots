@@ -19,3 +19,12 @@ estimate_accuracy(out_dir, iterations = 100)
 This function fits several Random Forest models to the data and then
 estimates their accuracy.
 }
+\examples{
+
+\dontrun{
+library(prioritizedeforestationhotspots)
+out_dir <- "~/Documents/prioritize_res"
+estimate_accuracy(out_dir)
+}
+
+}

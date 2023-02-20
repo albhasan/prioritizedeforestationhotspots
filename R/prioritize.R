@@ -6,6 +6,13 @@
 #' @param out_dir    A path to directory for storing results.
 #' @param iterations The number of times the experiment must be repeated.
 #' @return           A tibble
+#'@examples
+#'
+#'\dontrun{
+#'library(prioritizedeforestationhotspots)
+#'out_dir <- "~/Documents/prioritize_res"
+#'estimate_accuracy(out_dir)
+#'}
 #'
 #' @export
 estimate_accuracy <- function(out_dir, iterations = 100) {
@@ -95,6 +102,13 @@ estimate_accuracy <- function(out_dir, iterations = 100) {
 #' @param out_dir   A path to directory for storing results.
 #' @param seed      An integer. A seed number to pass to `set.seed`.
 #' @return          A tibble
+#'
+#'\dontrun{
+#'library(sf)
+#'library(prioritizedeforestationhotspots)
+#'out_dir <- "~/Documents/prioritize_res"
+#'fit_model(out_dir)
+#'}
 #'
 #' @export
 fit_model <- function(out_dir, seed = 42) {
@@ -194,6 +208,14 @@ fit_model <- function(out_dir, seed = 42) {
 #'                  number of labels must be one less than the number of probs.
 #' @return          An sf object with the priority classes.
 #'
+#'\dontrun{
+#'library(sf)
+#'library(prioritizedeforestationhotspots)
+#'out_dir <- "~/Documents/prioritize_res"
+#'fit_model(out_dir)
+#'results_to_shp(out_dir)
+#'}
+#'
 #' @export
 results_to_shp <- function(out_dir, probs = c(0, 0.7, 0.9, 1.0),
                            labels = c("Low", "Average", "High")) {
@@ -266,7 +288,7 @@ results_to_shp <- function(out_dir, probs = c(0, 0.7, 0.9, 1.0),
         dplyr::mutate(
             priority = cut(
                 pred_def_km2,
-                labels = labs,
+                labels = labels,
                 include.lowest = TRUE,
                 breaks = stats::quantile(pred_def_km2,
                                          probs = probs)))

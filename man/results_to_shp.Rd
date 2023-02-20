@@ -22,6 +22,14 @@ number of labels must be one less than the number of probs.}
 \value{
 \if{html}{\out{<div class="sourceCode">}}\preformatted{     An sf object with the priority classes.
 }\if{html}{\out{</div>}}
+
+\dontrun{
+library(sf)
+library(prioritizedeforestationhotspots)
+out_dir <- "~/Documents/prioritize_res"
+fit_model(out_dir)
+results_to_shp(out_dir)
+}
 }
 \description{
 This function joins the fitted model to the grid. It also saves the results
