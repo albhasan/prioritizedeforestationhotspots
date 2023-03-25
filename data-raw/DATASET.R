@@ -5,14 +5,17 @@ library(janitor)
 library(purrr)
 library(readxl)
 library(sf)
+library(tidyr)
 library(usethis)
 library(ensurer)
 
 data_file <- "./data-raw/Random_Forest_v4.xlsx"
 grid_file <- "./data-raw/Grade_Random_Forest.shp"
 area_file <- "./data-raw/Area_Grade.xlsx"
+biomass_dir <- "~/Documents/data/esacci/biomass/data/agb/maps/v3.0/geotiff"
 
 stopifnot(all(file.exists(data_file, grid_file, area_file)))
+stopifnot(dir.exists(biomass_dir))
 
 # Column names in data_file.
 col_names_ls <- list(
@@ -169,6 +172,59 @@ deforestation_grid <-
     sf::st_transform(crs = 4326) %>%
     dplyr::select(id = Id) %>%
     dplyr::left_join(area_tb, by = "id")
+
+stopifnot("IDs aren't unique in deforestation_grid" = 
+          length(unique(deforestation_grid$id)) == nrow(deforestation_grid))
+
+# Read biomass data.
+biomass_df <-
+    biomass_dir %>%
+    list.files(pattern = "*.tiff$", 
+              full.names = TRUE) %>%
+    tibble::as_tibble() %>%
+    dplyr::rename(file_path = value) %>%
+    dplyr::mutate(
+        file_name = tools::file_path_sans_ext(basename(file_path))
+    ) %>%
+    tidyr::separate(col = file_name, 
+                    sep = "-",
+                    into = c("location", "project", "level", "unit", "code", 
+                             "res", "epoch", "version")) %>%
+    dplyr::filter(project == "BIOMASS",
+                  level == "L4",
+                  code == "MERGED",
+                  res == "100m", 
+                  epoch == "2018",
+                  version == "fv3.0")
+
+# Mosaic biomass data.
+agb_r <- 
+    biomass_df %>%
+    dplyr::filter(unit == "AGB") %>% 
+    dplyr::pull(file_path) %>%
+    gdalUtilities::gdalbuildvrt(output.vrt = tempfile(pattern = "agb_", 
+                                                      fileext = ".vrt")) %>%
+    terra::rast()
+
+# TODO: Filter biomass raster using PRODES forest.
+# forest_sf <- "~/Documents/data/prodes/amazonia/forest_biome_2021.shp" %>%
+#     sf::read_sf() %>%
+#     sf::st_transform(crs = 4326)
+#
+# agb_masked_r <- 
+#     agb_r %>%
+#     terra::mask(mask = forest_sf)
+
+agb_zonal <-
+    agb_r %>%
+    terra::zonal(z = terra::vect(deforestation_grid["id"]), 
+                 fun = "mean")
+
+colnames(agb_zonal) <- "agb_2018"
+
+stopifnot("Invalid number of rows" = 
+          nrow(agb_zonal) == nrow(deforestation_grid))
+deforestation_grid <- cbind(deforestation_grid, agb_zonal)
 
 # Save data.
 usethis::use_data(deforestation_data, deforestation_grid, overwrite = TRUE)

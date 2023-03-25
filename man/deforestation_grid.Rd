@@ -10,13 +10,20 @@ A data frame with 6783 rows and 2 variables:
 \item{id}{Cell identifier}
 \item{geometry}{Cell geometry}
 \item{area_km2}{Area of each cell in square kilometers}
+\item{agb_2018}{Biomass in Megagrams per hectare for 2018}
 }
 }
 \usage{
 deforestation_grid
 }
 \description{
-A dataset containing spatial data regarding the Brazilian Amazon.
-These data represents a regular grid where each cell has an approximated
+A dataset containing spatial data regarding the Brazilian Amazon. These data
+represents a regular grid where each cell has an approximated area of 25*25
+kilometres.
+}
+\details{
+The above ground biomass for 2018 was estimated from ESA Biomass Climate
+Change Initiative (Biomass_cci) v3 as the mean of the pixels falling in each
+cell.
 }
 \keyword{datasets}

@@ -26,14 +26,20 @@
 
 #' Deforestation grid for the Brazilian Amazon
 #'
-#' A dataset containing spatial data regarding the Brazilian Amazon.
-#' These data represents a regular grid where each cell has an approximated
-#  area of 25*25 kilometres.
+#' A dataset containing spatial data regarding the Brazilian Amazon. These data 
+#' represents a regular grid where each cell has an approximated area of 25*25 
+#' kilometres.
+#' 
+#' The above ground biomass for 2018 was estimated from ESA Biomass Climate 
+#' Change Initiative (Biomass_cci) v3 as the mean of the pixels falling in each
+#' cell.
 #'
 #' @format A data frame with 6783 rows and 2 variables:
 #' \describe{
 #'    \item{id}{Cell identifier}
 #'    \item{geometry}{Cell geometry}
 #'    \item{area_km2}{Area of each cell in square kilometers}
+#'    \item{agb_2018}{Biomass in Megagrams per hectare for 2018}
 #' }
 "deforestation_grid"
+
