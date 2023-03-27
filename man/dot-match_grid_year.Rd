@@ -21,6 +21,5 @@
 }
 \description{
 The utility function takes the results, filters them by one year, classifies
-them into Low, Average, and High using the 0.7 and 0.9 quantiles, and joins
-the data to the deforestation grid.
+them, and joins the data to the deforestation grid.
 }

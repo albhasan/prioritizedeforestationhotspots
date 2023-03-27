@@ -1,13 +1,14 @@
 ## code to prepare `DATASET` dataset goes here
 
 library(dplyr)
+library(ensurer)
 library(janitor)
 library(purrr)
 library(readxl)
 library(sf)
+library(terra)
 library(tidyr)
 library(usethis)
-library(ensurer)
 
 data_file <- "./data-raw/Random_Forest_v4.xlsx"
 grid_file <- "./data-raw/Grade_Random_Forest.shp"
@@ -173,56 +174,58 @@ deforestation_grid <-
     dplyr::select(id = Id) %>%
     dplyr::left_join(area_tb, by = "id")
 
-stopifnot("IDs aren't unique in deforestation_grid" = 
+stopifnot("IDs aren't unique in deforestation_grid" =
           length(unique(deforestation_grid$id)) == nrow(deforestation_grid))
 
 # Read biomass data.
 biomass_df <-
     biomass_dir %>%
-    list.files(pattern = "*.tiff$", 
+    list.files(pattern = "*.tiff$",
               full.names = TRUE) %>%
     tibble::as_tibble() %>%
     dplyr::rename(file_path = value) %>%
     dplyr::mutate(
         file_name = tools::file_path_sans_ext(basename(file_path))
     ) %>%
-    tidyr::separate(col = file_name, 
+    tidyr::separate(col = file_name,
                     sep = "-",
-                    into = c("location", "project", "level", "unit", "code", 
+                    into = c("location", "project", "level", "unit", "code",
                              "res", "epoch", "version")) %>%
     dplyr::filter(project == "BIOMASS",
                   level == "L4",
                   code == "MERGED",
-                  res == "100m", 
+                  res == "100m",
                   epoch == "2018",
                   version == "fv3.0")
 
 # Mosaic biomass data.
-agb_r <- 
+agb_r <-
     biomass_df %>%
-    dplyr::filter(unit == "AGB") %>% 
+    dplyr::filter(unit == "AGB") %>%
     dplyr::pull(file_path) %>%
-    gdalUtilities::gdalbuildvrt(output.vrt = tempfile(pattern = "agb_", 
+    gdalUtilities::gdalbuildvrt(output.vrt = tempfile(pattern = "agb_",
                                                       fileext = ".vrt")) %>%
     terra::rast()
 
-# TODO: Filter biomass raster using PRODES forest.
-# forest_sf <- "~/Documents/data/prodes/amazonia/forest_biome_2021.shp" %>%
-#     sf::read_sf() %>%
-#     sf::st_transform(crs = 4326)
-#
-# agb_masked_r <- 
-#     agb_r %>%
-#     terra::mask(mask = forest_sf)
+# Filter biomass raster using PRODES forest of 2021.
+forest_sf <- "~/Documents/data/prodes/amazonia/forest_biome_2021.shp" %>%
+    sf::read_sf() %>%
+    sf::st_transform(crs = 4326)
 
-agb_zonal <-
+agb_masked_r <-
     agb_r %>%
-    terra::zonal(z = terra::vect(deforestation_grid["id"]), 
-                 fun = "mean")
+    terra::mask(mask = forest_sf)
 
-colnames(agb_zonal) <- "agb_2018"
+# Estimate the mean biomass by hectarea.
+agb_zonal <-
+    agb_masked_r %>%
+    terra::zonal(z = terra::vect(deforestation_grid["id"]),
+                 fun = "mean",
+                 na.rm = TRUE)
 
-stopifnot("Invalid number of rows" = 
+colnames(agb_zonal) <- "agb_2018_forest_2021"
+
+stopifnot("Invalid number of rows" =
           nrow(agb_zonal) == nrow(deforestation_grid))
 deforestation_grid <- cbind(deforestation_grid, agb_zonal)
 

@@ -221,7 +221,9 @@ fit_model <- function(out_dir, seed = 42) {
 #' @export
 results_to_shp <- function(out_dir, probs = c(0, 0.7, 0.9, 1.0),
                            labels = c("Low", "Average", "High")) {
-    pred_def <- ref_year <- id <- priority <- NULL
+
+    agb_2018_forest_2021 <- id <- pred_def <- pred_def_ha <- NULL
+    pred_def_km2 <- pred_emission_ton <- priority <- ref_year <- NULL
 
     # Read the results of applying the model.
     results_tb <-
@@ -229,7 +231,7 @@ results_to_shp <- function(out_dir, probs = c(0, 0.7, 0.9, 1.0),
             list.files(pattern = "new_data_tb.rds",
                        full.names = TRUE) %>%
         readRDS() %>%
-        # NOTE: We convert from hectares to km2.
+        # NOTE: We convert from meters to km2.
         dplyr::mutate(pred_def_km2 = pred_def/1000^2)
 
     # Get the reference years.
@@ -247,20 +249,42 @@ results_to_shp <- function(out_dir, probs = c(0, 0.7, 0.9, 1.0),
 
     results_sf <-
         do.call(rbind, ref_years[["sf_obj"]]) %>%
-        dplyr::select(id, ref_year, priority)
+        dplyr::select(id, ref_year, priority, pred_def_km2)
+
+    biomass_tb <-
+        prioritizedeforestationhotspots::deforestation_grid %>%
+        sf::st_drop_geometry() %>%
+        dplyr::select(id, agb_2018_forest_2021)
 
     results_tb <-
         results_sf %>%
         sf::st_drop_geometry() %>%
-        tidyr::pivot_wider(names_from = "ref_year", values_from = "priority",
-        names_prefix = "pri")
+        dplyr::left_join(biomass_tb, by = "id") %>%
+        # NOTE: Covert from km2 to hectareas
+        dplyr::mutate(
+            pred_def_ha = pred_def_km2 * 100,
+            pred_emission_ton = pred_def_ha * (agb_2018_forest_2021 * 0.05),
+            # NOTE: Replace NAs with 0s.
+            pred_emission_ton = tidyr::replace_na(pred_emission_ton, 0)
+        ) %>%
+        dplyr::select(id, ref_year, priority, pred_emission_ton) %>%
+        dplyr::mutate(priority_emission = cut(
+            pred_emission_ton,
+            labels = labels,
+            include.lowest = TRUE,
+            breaks = stats::quantile(pred_emission_ton, probs = probs,
+                                     na.rm = TRUE))
+        ) %>%
+        tidyr::pivot_wider(names_from = "ref_year",
+                           values_from = c("priority", "priority_emission"))
 
     results_sf <-
         prioritizedeforestationhotspots::deforestation_grid %>%
         dplyr::left_join(results_tb, by = "id")
 
     results_sf %>%
-        sf::write_sf(file.path(out_dir, "priority_classes.shp"))
+        sf::write_sf(file.path(out_dir, "priority_classes.gpkg"),
+                               layer = "priority_classes")
 
     return(results_sf)
 }
@@ -268,8 +292,7 @@ results_to_shp <- function(out_dir, probs = c(0, 0.7, 0.9, 1.0),
 #' Join results to deforestation grid.
 #'
 #' The utility function takes the results, filters them by one year, classifies
-#' them into Low, Average, and High using the 0.7 and 0.9 quantiles, and joins
-#' the data to the deforestation grid.
+#' them, and joins the data to the deforestation grid.
 #'
 #' @param y          A character representing a single year.
 #' @param results_tb A tibble with the results of fitting the model.
@@ -280,7 +303,7 @@ results_to_shp <- function(out_dir, probs = c(0, 0.7, 0.9, 1.0),
 .match_grid_year <- function(y, results_tb, probs, labels) {
     ref_year <- pred_def_km2 <- NULL
     stopifnot("Missmatch between category cuts and their labels" =
-              length(probs) == length(labels) - 1)
+              length(labels) == length(probs) - 1)
     stopifnot("Probabilities must be between 0 and 1" =
               all(probs >= 0) && all(probs <= 1))
 
@@ -320,8 +343,8 @@ results_to_shp <- function(out_dir, probs = c(0, 0.7, 0.9, 1.0),
 
     # Prepare data.
     data_tb <- prioritizedeforestationhotspots::deforestation_data %>%
-        # NOTE: Deforestation data is transformed from km2 to hectares.
-        #       And the logarithm is applid.
+        # NOTE: Deforestation data is transformed from km2 to mt2.
+        #       And the logarithm is applied.
         dplyr::mutate(def = def * 1000^2,
                       log_def = log(def))
 
