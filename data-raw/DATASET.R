@@ -198,6 +198,11 @@ biomass_df <-
                   epoch == "2018",
                   version == "fv3.0")
 
+# Filter rasters using PRODES forest of 2021.
+forest_sf <- "~/Documents/data/prodes/amazonia/forest_biome_2021.shp" %>%
+    sf::read_sf() %>%
+    sf::st_transform(crs = 4326)
+
 # Mosaic biomass data.
 agb_r <-
     biomass_df %>%
@@ -206,28 +211,54 @@ agb_r <-
     gdalUtilities::gdalbuildvrt(output.vrt = tempfile(pattern = "agb_",
                                                       fileext = ".vrt")) %>%
     terra::rast()
-
-# Filter biomass raster using PRODES forest of 2021.
-forest_sf <- "~/Documents/data/prodes/amazonia/forest_biome_2021.shp" %>%
-    sf::read_sf() %>%
-    sf::st_transform(crs = 4326)
-
+# NOTE: This takes long!
 agb_masked_r <-
     agb_r %>%
     terra::mask(mask = forest_sf)
-
+# NOTE: This takes long!
 # Estimate the mean biomass by hectarea.
 agb_zonal <-
     agb_masked_r %>%
     terra::zonal(z = terra::vect(deforestation_grid["id"]),
                  fun = "mean",
                  na.rm = TRUE)
-
 colnames(agb_zonal) <- "agb_2018_forest_2021"
-
 stopifnot("Invalid number of rows" =
           nrow(agb_zonal) == nrow(deforestation_grid))
 deforestation_grid <- cbind(deforestation_grid, agb_zonal)
+remove(agb_zonal, agb_masked_r, agb_r)
+
+# Mosaic biomass SD data
+agb_sd_r <-
+    biomass_df %>%
+    dplyr::filter(unit == "AGB_SD") %>%
+    dplyr::pull(file_path) %>%
+    gdalUtilities::gdalbuildvrt(output.vrt = tempfile(pattern = "agb_sd_",
+                                                      fileext = ".vrt")) %>%
+    terra::rast()
+# NOTE: This takes long!
+agb_sd_masked_r <-
+    agb_sd_r %>%
+    terra::mask(mask = forest_sf)
+# Estimate the min & max biomass SD by hectarea.
+agb_sd_min_zonal <-
+    agb_sd_masked_r %>%
+    terra::zonal(z = terra::vect(deforestation_grid["id"]),
+                 fun = "min",
+                 na.rm = TRUE)
+agb_sd_max_zonal <-
+    agb_sd_masked_r %>%
+    terra::zonal(z = terra::vect(deforestation_grid["id"]),
+                 fun = "max",
+                 na.rm = TRUE)
+colnames(agb_sd_min_zonal) <- "agb_sd_min_2018_forest_2021"
+colnames(agb_sd_max_zonal) <- "agb_sd_max_2018_forest_2021"
+stopifnot("Invalid number of rows of min SD" =
+          nrow(agb_sd_min_zonal) == nrow(deforestation_grid))
+stopifnot("Invalid number of rows of max SD" =
+          nrow(agb_sd_max_zonal) == nrow(deforestation_grid))
+deforestation_grid <- cbind(deforestation_grid, agb_sd_min_zonal)
+deforestation_grid <- cbind(deforestation_grid, agb_sd_max_zonal)
 
 # Save data.
 usethis::use_data(deforestation_data, deforestation_grid, overwrite = TRUE)
