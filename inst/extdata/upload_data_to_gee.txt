@@ -1,0 +1,10 @@
+0 - Call export_data()
+1 - Prepare a directory with zip files, one per shp (use zip_shp).
+2 - Activate the Python virtual environment with Google CLI
+cd /home/alber/Documents/tutorials/google_earth_engine/cli
+source .venv/bin/activate
+3 - Call geeup
+geeup tabup --source /home/alber/Documents/prioritize_export/prioritizedeforestationhotspots --dest users/albhasan/prioritizedeforestationhotspots --user albhasan@gmail.com --overwrite yes
+
+NOTE: Perhaps you would need the GEE cookie; use the Copy Cookie Tool on Chromium.
+
