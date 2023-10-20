@@ -1,16 +1,11 @@
-# Export data and results.
-
-# library(dplyr)
-# library(ggplot2)
-# library(purrr)
-# library(sf)
-# library(tidyr)
-# library(tidyselect)
-# library(tools)
-
+#' Export the results and the variable data to SHPs
+#'
+#' This function exports the data in this package as SHPs.
+#'
+#' @param out_dir    A path to directory for storing results.
+#'
+#' @export
 export_data <- function(out_dir) {
-
-    #out_dir = "/home/alber/Documents/prioritize_export"
 
     #---- Export results to SHP ----
 
@@ -79,25 +74,25 @@ export_data <- function(out_dir) {
         "active_fires_ly", "Number of fires", "Number of active fires in the year before"
     )
 
-    stopifnot("Missing variables" = 
-              length(variables$col_name[!(variables$col_name %in% 
+    stopifnot("Missing variables" =
+              length(variables$col_name[!(variables$col_name %in%
               colnames(def_sf))]) == 0)
 
     ref_years <- unique(def_sf$ref_year)
-    
+
     for (i in seq(nrow(variables))) {
         var_name <- variables$col_name[i]
         new_sf <- def_sf[c("ref_year", var_name)]
         for (y in ref_years) {
-            sf::write_sf(new_sf[new_sf$ref_year == y, ], 
+            sf::write_sf(new_sf[new_sf$ref_year == y, ],
                          file.path(out_dir, paste0(var_name, "_", y, ".shp")))
             conn <- file(file.path(out_dir, paste0(var_name, "_", y, ".txt")))
-            writeLines(paste0(variables$description[i], " - ", 
+            writeLines(paste0(variables$description[i], " - ",
                               variables$units[i], " - Reference year: ",
-                              y), 
+                              y),
                        conn)
             close(conn)
-        } 
+        }
     }
 }
 
