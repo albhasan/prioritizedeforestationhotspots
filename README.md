@@ -5,6 +5,7 @@
 
 <!-- badges: start -->
 
+[![DOI](https://zenodo.org/badge/445878587.svg)](https://zenodo.org/doi/10.5281/zenodo.10078634)
 [![R-CMD-check](https://github.com/albhasan/prioritizedeforestationhotspots/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/albhasan/prioritizedeforestationhotspots/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
@@ -91,39 +92,39 @@ library(tidyselect)
 library(tools)
 
 # Read the result data from the package.
-priority_sf <- 
-    system.file("extdata", "results", "priority_classes.shp", 
+priority_sf <-
+    system.file("extdata", "results", "priority_classes.shp",
                 package = "prioritizedeforestationhotspots") %>%
     read_sf()
 
 # Format the data.
-priority_tb <- 
+priority_tb <-
     priority_sf %>%
     st_drop_geometry() %>%
-    pivot_longer(cols = starts_with("pri"), 
+    pivot_longer(cols = starts_with("pri"),
                  names_prefix = "pri",
-                 names_to = "ref_year", 
-                 values_to = "priority") 
+                 names_to = "ref_year",
+                 values_to = "priority")
 
 # Arrange data into a sf object.
-priority_sf <- 
+priority_sf <-
     priority_sf %>%
     select(id) %>%
-    right_join(priority_tb,  
-               by = "id", 
+    right_join(priority_tb,
+               by = "id",
                multiple = "all") %>%
-    mutate(priority = factor(priority, 
+    mutate(priority = factor(priority,
                              labels = c("High", "Average", "Low"),
                              ordered = TRUE))
 
-# Plot. 
+# Plot.
 priority_sf %>%
     ggplot() +
     geom_sf(aes(fill = priority), lwd = 0) +
     facet_wrap(~ref_year) +
     theme(axis.text.x = element_text(angle = 90)) +
     theme(legend.title=element_blank()) +
-    ggtitle("Priority areas (deforestation hotspots)") 
+    ggtitle("Priority areas (deforestation hotspots)")
 ```
 
 <img src="man/figures/README-map_results-1.png" width="100%" />
@@ -140,18 +141,14 @@ library(tidyr)
 library(sf)
 library(ggplot2)
 
-def_sf <- 
+def_sf <-
     deforestation_grid %>%
     right_join(deforestation_data, by = "id")
-#> Warning in sf_column %in% names(g): Each row in `x` is expected to match at most 1 row in `y`.
-#> ℹ Row 1 of `x` matches multiple rows.
-#> ℹ If multiple matches are expected, set `multiple = "all"` to silence this
-#>   warning.
 
 def_sf %>%
     ggplot() +
     geom_sf(aes(fill = area_PA), lwd = 0) +
-    scale_fill_gradient(name = "Area (km2)", 
+    scale_fill_gradient(name = "Area (km2)",
                         trans = "log",
                         breaks = c(1, 10, 100, 600),
                         low = "green",
@@ -167,7 +164,7 @@ def_sf %>%
 def_sf %>%
     ggplot() +
     geom_sf(aes(fill = dist_hidro), lwd = 0) +
-    scale_fill_gradient(name = "Distance (km)", 
+    scale_fill_gradient(name = "Distance (km)",
                         trans = "log",
                         breaks = c(1, 10, 50, 150),
                         low = "green",
@@ -182,7 +179,7 @@ def_sf %>%
 def_sf %>%
     ggplot() +
     geom_sf(aes(fill = dist_road), lwd = 0) +
-    scale_fill_gradient(name = "Distance (km)", 
+    scale_fill_gradient(name = "Distance (km)",
                         trans = "log",
                         breaks = c(1, 5, 50),
                         low = "green",
