@@ -16,40 +16,41 @@ knitr::opts_chunk$set(
 # prioritizedeforestationhotspots
 
 <!-- badges: start -->
+[![DOI](https://zenodo.org/badge/445878587.svg)](https://zenodo.org/doi/10.5281/zenodo.10078634)
 [![R-CMD-check](https://github.com/albhasan/prioritizedeforestationhotspots/actions/workflows/R-CMD-check.yaml/badge.svg)](https://github.com/albhasan/prioritizedeforestationhotspots/actions/workflows/R-CMD-check.yaml)
 <!-- badges: end -->
 
-This package introduces a method for prioritizing deforestation hotspots to 
-support law enforcement actions in the Brazilian Amazon, as describen in the 
-paper entitled: *Science-based planning can support law enforcement actions to 
-curb deforestation in the Brazilian Amazon* by Mataveli et at. (2022) [1], 
+This package introduces a method for prioritizing deforestation hotspots to
+support law enforcement actions in the Brazilian Amazon, as describen in the
+paper entitled: *Science-based planning can support law enforcement actions to
+curb deforestation in the Brazilian Amazon* by Mataveli et at. (2022) [1],
 available at https://doi.org/10.1111/conl.12908
 
 This is the abstract of the aforementioned paper [1]:
 
 While Brazil publicly committed to reduce deforestation in Amazonia at the 26th
-Conference of the Parties (COP26), the Brazilian parliament is moving toward 
-weakening environmental laws. Deforestation rates continue ascending, reaching 
-in 2021 the highest value since 2006 (13,235 km2). To overcome this paradox, 
-strategies to curb deforestation are mandatory. The current strategy, “Plano 
-Amazônia 21/22,” prioritizes law enforcement actions to curb illegal 
-deforestation in only 11 Amazonian municipalities. Here, we show that this 
-prioritization is likely to be insufficient since these municipalities account 
-for just 37% of the current deforestation rate. This strategy may also be 
-undermined by the leakage of deforestation actions to unmonitored 
-municipalities. Using a set of spatially explicit datasets integrated into a 
-deforestation-prediction modeling approach, we propose a science-based 
-alternative method for ranking deforestation hotspots to be prioritized by law 
-enforcement actions. Our prioritization method accounts for more than 60% of the 
-deforestation, detecting larger deforested areas in both private and public 
-lands, while covering 27% less territory than “Plano Amazônia 21/22.” Optimizing 
-the detection of priority areas for curbing deforestation, as proposed here, is 
-the first step to reducing deforestation rates and comply with the Brazilian 
+Conference of the Parties (COP26), the Brazilian parliament is moving toward
+weakening environmental laws. Deforestation rates continue ascending, reaching
+in 2021 the highest value since 2006 (13,235 km2). To overcome this paradox,
+strategies to curb deforestation are mandatory. The current strategy, “Plano
+Amazônia 21/22,” prioritizes law enforcement actions to curb illegal
+deforestation in only 11 Amazonian municipalities. Here, we show that this
+prioritization is likely to be insufficient since these municipalities account
+for just 37% of the current deforestation rate. This strategy may also be
+undermined by the leakage of deforestation actions to unmonitored
+municipalities. Using a set of spatially explicit datasets integrated into a
+deforestation-prediction modeling approach, we propose a science-based
+alternative method for ranking deforestation hotspots to be prioritized by law
+enforcement actions. Our prioritization method accounts for more than 60% of the
+deforestation, detecting larger deforested areas in both private and public
+lands, while covering 27% less territory than “Plano Amazônia 21/22.” Optimizing
+the detection of priority areas for curbing deforestation, as proposed here, is
+the first step to reducing deforestation rates and comply with the Brazilian
 legal commitment of 3925 km2 year−1.
 
-[1] Mataveli, G., de Oliveira, G., Chaves, M. E., Dalagnol, R., Wagner, F. H., 
-    Ipia, A. H., ... & Aragão, L. E. (2022). Science‐based planning can support 
-    law enforcement actions to curb deforestation in the Brazilian Amazon. 
+[1] Mataveli, G., de Oliveira, G., Chaves, M. E., Dalagnol, R., Wagner, F. H.,
+    Ipia, A. H., ... & Aragão, L. E. (2022). Science‐based planning can support
+    law enforcement actions to curb deforestation in the Brazilian Amazon.
     Conservation Letters, e12908.
 
 
@@ -68,7 +69,7 @@ devtools::install_github("albhasan/prioritizedeforestationhotspots")
 
 ### Run the model
 
-This basic example produces results similar to those shown in the 
+This basic example produces results similar to those shown in the
 aforementioned paper (note that estimating the model accuracy takes hours!):
 
 ```{r example, eval=FALSE}
@@ -103,44 +104,44 @@ library(tidyselect)
 library(tools)
 
 # Read the result data from the package.
-priority_sf <- 
-    system.file("extdata", "results", "priority_classes.shp", 
+priority_sf <-
+    system.file("extdata", "results", "priority_classes.shp",
                 package = "prioritizedeforestationhotspots") %>%
     read_sf()
 
 # Format the data.
-priority_tb <- 
+priority_tb <-
     priority_sf %>%
     st_drop_geometry() %>%
-    pivot_longer(cols = starts_with("pri"), 
+    pivot_longer(cols = starts_with("pri"),
                  names_prefix = "pri",
-                 names_to = "ref_year", 
-                 values_to = "priority") 
+                 names_to = "ref_year",
+                 values_to = "priority")
 
 # Arrange data into a sf object.
-priority_sf <- 
+priority_sf <-
     priority_sf %>%
     select(id) %>%
-    right_join(priority_tb,  
-               by = "id", 
+    right_join(priority_tb,
+               by = "id",
                multiple = "all") %>%
-    mutate(priority = factor(priority, 
+    mutate(priority = factor(priority,
                              labels = c("High", "Average", "Low"),
                              ordered = TRUE))
 
-# Plot. 
+# Plot.
 priority_sf %>%
     ggplot() +
     geom_sf(aes(fill = priority), lwd = 0) +
     facet_wrap(~ref_year) +
     theme(axis.text.x = element_text(angle = 90)) +
     theme(legend.title=element_blank()) +
-    ggtitle("Priority areas (deforestation hotspots)") 
+    ggtitle("Priority areas (deforestation hotspots)")
 
 
 ```
 
-We also included the variables used for the model.  This example shows some of 
+We also included the variables used for the model.  This example shows some of
 the data included in this package:
 
 
@@ -154,14 +155,14 @@ library(tidyr)
 library(sf)
 library(ggplot2)
 
-def_sf <- 
+def_sf <-
     deforestation_grid %>%
     right_join(deforestation_data, by = "id")
 
 def_sf %>%
     ggplot() +
     geom_sf(aes(fill = area_PA), lwd = 0) +
-    scale_fill_gradient(name = "Area (km2)", 
+    scale_fill_gradient(name = "Area (km2)",
                         trans = "log",
                         breaks = c(1, 10, 100, 600),
                         low = "green",
@@ -172,7 +173,7 @@ def_sf %>%
 def_sf %>%
     ggplot() +
     geom_sf(aes(fill = dist_hidro), lwd = 0) +
-    scale_fill_gradient(name = "Distance (km)", 
+    scale_fill_gradient(name = "Distance (km)",
                         trans = "log",
                         breaks = c(1, 10, 50, 150),
                         low = "green",
@@ -183,7 +184,7 @@ def_sf %>%
 def_sf %>%
     ggplot() +
     geom_sf(aes(fill = dist_road), lwd = 0) +
-    scale_fill_gradient(name = "Distance (km)", 
+    scale_fill_gradient(name = "Distance (km)",
                         trans = "log",
                         breaks = c(1, 5, 50),
                         low = "green",
