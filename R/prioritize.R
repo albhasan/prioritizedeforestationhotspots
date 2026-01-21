@@ -254,7 +254,8 @@ results_to_shp <- function(out_dir, probs = c(0, 0.7, 0.9, 1.0),
     biomass_tb <-
         prioritizedeforestationhotspots::deforestation_grid %>%
         sf::st_drop_geometry() %>%
-        dplyr::select(id, agb_2018_forest_2021)
+        dplyr::select(id, agb_2018_forest_2021, agb_sd_min_2018_forest_2021,
+                      agb_sd_max_2018_forest_2021)
 
     results_tb <-
         results_sf %>%
@@ -264,6 +265,17 @@ results_to_shp <- function(out_dir, probs = c(0, 0.7, 0.9, 1.0),
         dplyr::mutate(
             pred_def_ha = pred_def_km2 * 100,
             pred_emission_ton = pred_def_ha * (agb_2018_forest_2021 * 0.05),
+
+# TODO: Add estimation of Standard Deviation:
+# - convert SD to VAR, average VAR inside GRID and transform back to SD. NOTE:
+#   this assumes biomass observations are independent and normal.
+#   https://stats.stackexchange.com/questions/25848/how-to-sum-a-standard-deviation/
+# - create new MIN and MAX rasters by adding +/- 1 SD to the biomass and then
+#   compute the mean inside the grid. This would tell the biomass with a
+#   a confidence interval of 66%.
+# - Compute a new SD from the observations inside each cell in the grid.
+#   However the SD from the original data is lost.
+
             # NOTE: Replace NAs with 0s.
             pred_emission_ton = tidyr::replace_na(pred_emission_ton, 0)
         ) %>%
